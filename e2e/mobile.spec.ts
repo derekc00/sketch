@@ -1,6 +1,10 @@
 import { test, expect, devices } from '@playwright/test';
 
-test.use(devices['iPhone 13']);
+test.use({
+  ...devices['iPhone 13'],
+  // Keep this spec on the Chromium project instead of the device default.
+  defaultBrowserType: 'chromium',
+});
 
 test.describe('Mobile layout', () => {
   test('shows tabbed interface instead of split panels', async ({ page }) => {

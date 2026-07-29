@@ -1,7 +1,13 @@
 import * as xstate from 'xstate';
 import type { AnyStateMachine } from 'xstate';
 import tsBlankSpace from 'ts-blank-space';
-import { createGraph, addNode, addEdge, type Graph } from '@statelyai/graph';
+import {
+  createGraph,
+  addNode,
+  addEdge,
+  updateNode,
+  type Graph,
+} from '@statelyai/graph';
 import {
   fromMermaidState,
   fromMermaidFlowchart,
@@ -82,7 +88,6 @@ export function machineToGraph(machine: AnyStateMachine): MachineGraph {
     addNode(graph, {
       id: stateNode.id,
       parentId: stateNode.parent?.id ?? null,
-      initialNodeId: initialChildId ?? undefined,
       label: stateNode.key,
       data: {
         key: stateNode.key,
@@ -135,6 +140,12 @@ export function machineToGraph(machine: AnyStateMachine): MachineGraph {
 
     for (const child of Object.values(stateNode.states ?? {})) {
       addNodes(child);
+    }
+
+    // @statelyai/graph validates initial node references immediately, so set
+    // this only after all of the current node's children have been added.
+    if (initialChildId) {
+      updateNode(graph, stateNode.id, { initialNodeId: initialChildId });
     }
   }
 

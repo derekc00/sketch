@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as InspectRouteImport } from './routes/inspect'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InspectRouteImport } from './routes/inspect'
 import { Route as VizSourceFileIdRouteImport } from './routes/viz/$sourceFileId'
 
-const InspectRoute = InspectRouteImport.update({
-  id: '/inspect',
-  path: '/inspect',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectRoute = InspectRouteImport.update({
+  id: '/inspect',
+  path: '/inspect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VizSourceFileIdRoute = VizSourceFileIdRouteImport.update({
@@ -61,18 +61,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/inspect': {
-      id: '/inspect'
-      path: '/inspect'
-      fullPath: '/inspect'
-      preLoaderRoute: typeof InspectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspect': {
+      id: '/inspect'
+      path: '/inspect'
+      fullPath: '/inspect'
+      preLoaderRoute: typeof InspectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/viz/$sourceFileId': {
