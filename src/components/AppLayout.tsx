@@ -10,6 +10,7 @@ import type {
   PanelImperativeHandle,
 } from 'react-resizable-panels';
 import { MachineViz } from '@/components/MachineViz';
+import { FlowSelector } from '@/components/FlowSelector';
 import { CodePanel } from '@/components/CodePanel';
 import {
   ResizablePanelGroup,
@@ -346,6 +347,7 @@ export function AppLayout() {
         </div>
 
         <div className="flex items-center gap-2">
+          <FlowSelector />
           {!isEmpty && (
             <button
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-50"

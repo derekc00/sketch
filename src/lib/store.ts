@@ -332,6 +332,20 @@ export const appStore = createStore({
       ...context,
       machine: event.machine,
     }),
+    selectMachine: (context, event: { id: string }) => {
+      const result = parseCode(context.code, detectFormat(context.code));
+      const machine = result.machines.find((candidate) => candidate.id === event.id);
+      if (result.error || !machine) return context;
+      try {
+        return {
+          ...context, machine, graph: machineToGraph(machine), error: null,
+          mode: 'view' as const, simMachine: null, simEvents: [] as SimEvent[],
+          simActiveIds: new Set<string>(), highlights: new Set<string>(),
+        };
+      } catch (error) {
+        return { ...context, error: error instanceof Error ? error.message : String(error) };
+      }
+    },
     sourceFileChanged: (context, event: { code: string; id: string; name: string }) => {
       const format = detectFormat(event.code);
       const result = parseCode(event.code, format);
@@ -397,7 +411,8 @@ export const appStore = createStore({
       }
 
       try {
-        const machine = result.machines[0];
+        const machine = result.machines.find((candidate) => candidate.id === context.machine?.id)
+          ?? result.machines[0];
         const graph = machineToGraph(machine);
         return {
           ...context,

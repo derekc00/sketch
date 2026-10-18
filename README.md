@@ -17,10 +17,23 @@ Live page: **[locker-stately.derektchang.workers.dev](https://locker-stately.der
 This fork loads the Locker rental design prototype from
 [`src/lib/locker-rental.machine.mjs`](src/lib/locker-rental.machine.mjs) by default.
 The header omits the Examples launcher, Help menu and signed-out Sign in button.
+The **Flow** selector exposes Rental journey, Pod availability, Phone unavailable,
+Powerless return and Helper credit. Switching flows preserves the editor source
+and resets the previous simulation; each graph simulates independently.
+
+The model covers fresh inspection/replacement time, authorization before unlock
+and capture after accepted final return, failed-door recovery, auxiliary-return
+admission suspension, device/outage recovery and optional fixed helper credit.
+Helper credit amount/redemption and the physical powerless-return mechanism
+remain open design decisions. The canonical model and policy documents live in
+[Locker](https://github.com/derekc00/locker/tree/main/docs/prototypes/rental-state-machine).
+
+![Helper credit flow](docs/locker-helper-credit.png)
 
 - Cloudflare Worker: `locker-stately`.
 - Cloudflare account ID: `12daf71d9ae53e287fa320d1964f4b8d`.
 - First deployed: October 18, 2026.
+- Current deployed version: `ab67018a-693b-4448-ab09-be9db6c23853` (October 18, five flows).
 - Initial deployment version: `35cc7d2d-7bb5-47d6-aa71-927cc9b59351`.
 
 Build and deploy from the repository root using Wrangler:
