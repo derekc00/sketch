@@ -1,79 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { loadExample } from './helpers/load-example';
 
-test.describe('Examples', () => {
+test.describe('Machine fixtures through editor', () => {
   test.beforeEach(async ({ page }) => {
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
     await page.goto('/');
-  });
-
-  test('opens examples in a modal from the header', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-
-    await expect(page.getByRole('dialog', { name: 'Examples' })).toBeVisible();
-  });
-
-  test('shows realistic xstate examples first in the modal list', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-
-    const exampleButtons = page.locator('[data-testid="example-list"] button');
-    await expect(exampleButtons.nth(0)).toContainText('Session Timeout');
-    await expect(exampleButtons.nth(1)).toContainText('OTP Verification');
-    await expect(exampleButtons.nth(2)).toContainText('Checkout');
-  });
-
-  test('lists examples in the modal', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-
-    // Check example buttons are listed (use role='button' to avoid strict mode)
-    await expect(
-      page.getByRole('button', { name: /Session Timeout/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /OTP Verification/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Checkout/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Counter/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Traffic Light/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Authentication/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Media Player/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Promise/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Stopwatch/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Elevator/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Form Wizard/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Coffee Machine/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Door Lock/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Order Process/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: /Connection/ }),
-    ).toBeVisible();
+    await expect(page.getByTestId('code-editor')).toBeVisible();
   });
 
   test('loads Traffic Light example', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Traffic Light/ }).click();
+    await loadExample(page, 'Traffic Light');
 
     await expect(page.getByTestId('machine-name')).toHaveText('trafficLight');
     await expect(
@@ -88,8 +24,7 @@ test.describe('Examples', () => {
   });
 
   test('loads Vending Machine example (JSON format)', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Vending Machine/ }).click();
+    await loadExample(page, 'Vending Machine');
 
     await expect(page.getByTestId('machine-name')).toHaveText('vendingMachine');
     await expect(
@@ -105,8 +40,7 @@ test.describe('Examples', () => {
   test('simulates Counter example and shows assigned state and context', async ({
     page,
   }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Counter/ }).click();
+    await loadExample(page, 'Counter');
 
     await expect(page.getByTestId('machine-name')).toHaveText('counter');
     await page.getByRole('tab', { name: 'Simulation' }).click();
@@ -135,8 +69,7 @@ test.describe('Examples', () => {
   });
 
   test('loads Promise example (YAML format)', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Promise/ }).click();
+    await loadExample(page, 'Promise');
 
     await expect(page.getByTestId('machine-name')).toHaveText('promise');
     await expect(
@@ -153,8 +86,7 @@ test.describe('Examples', () => {
   });
 
   test('loads Authentication example with nested states', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Authentication/ }).click();
+    await loadExample(page, 'Authentication');
 
     await expect(page.getByTestId('machine-name')).toHaveText('auth');
     await expect(
@@ -168,18 +100,8 @@ test.describe('Examples', () => {
     ).toBeVisible();
   });
 
-  test('returns to Code tab after selecting example from modal', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Session Timeout/ }).click();
-
-    const codeTab = page.getByRole('tab', { name: 'Code' });
-    await expect(codeTab).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('dialog', { name: 'Examples' })).toHaveCount(0);
-  });
-
   test('loads Door Lock example (Mermaid state diagram)', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Door Lock/ }).click();
+    await loadExample(page, 'Door Lock');
 
     await expect(page.getByTestId('machine-name')).toHaveText('machine');
     await expect(
@@ -196,8 +118,7 @@ test.describe('Examples', () => {
   });
 
   test('loads Order Process example (Mermaid flowchart)', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Order Process/ }).click();
+    await loadExample(page, 'Order Process');
 
     await expect(page.getByTestId('machine-name')).toHaveText('machine');
     await expect(
@@ -211,8 +132,7 @@ test.describe('Examples', () => {
   });
 
   test('can simulate Traffic Light example', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Traffic Light/ }).click();
+    await loadExample(page, 'Traffic Light');
     await expect(page.getByTestId('machine-name')).toHaveText('trafficLight');
 
     await page.getByLabel('Start simulation').click();
@@ -234,8 +154,7 @@ test.describe('Examples', () => {
   });
 
   test('loads Session Timeout example and shows xstate format', async ({ page }) => {
-    await page.getByRole('button', { name: 'Examples' }).click();
-    await page.getByRole('button', { name: /Session Timeout/ }).click();
+    await loadExample(page, 'Session Timeout');
 
     await expect(page.getByTestId('machine-name')).toHaveText('sessionTimeout');
     await expect(

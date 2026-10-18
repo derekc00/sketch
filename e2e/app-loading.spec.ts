@@ -8,7 +8,7 @@ test.describe('App loading', () => {
 
   test('renders default machine visualization', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByTestId('machine-name')).toHaveText('trafficLight');
+    await expect(page.getByTestId('machine-name')).toHaveText('rental');
   });
 
   test('renders state nodes from default machine', async ({ page }) => {
@@ -18,9 +18,9 @@ test.describe('App loading', () => {
     await expect(stateNodes.first()).toBeVisible();
 
     // Check for known states from default machine
-    await expect(page.locator('[data-state-id="trafficLight.green"]')).toBeVisible();
-    await expect(page.locator('[data-state-id="trafficLight.yellow"]')).toBeVisible();
-    await expect(page.locator('[data-state-id="trafficLight.red"]')).toBeVisible();
+    await expect(page.locator('[data-state-id="rental.Browsing"]')).toBeVisible();
+    await expect(page.locator('[data-state-id="rental.Checkout"]')).toBeVisible();
+    await expect(page.locator('[data-state-id="rental.AwaitingAccess"]')).toBeVisible();
   });
 
   test('renders code editor panel on desktop', async ({ page }) => {
@@ -30,9 +30,12 @@ test.describe('App loading', () => {
     await expect(page.getByRole('tab', { name: 'Simulation' })).toBeVisible();
   });
 
-  test('renders examples launcher in header', async ({ page }) => {
+  test('omits examples, help, and sign-in controls from the header', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByTestId('header').getByRole('button', { name: 'Examples' })).toBeVisible();
+    const header = page.getByTestId('header');
+    await expect(header.getByRole('button', { name: 'Examples', exact: true })).toHaveCount(0);
+    await expect(header.getByRole('button', { name: 'Help', exact: true })).toHaveCount(0);
+    await expect(header.getByRole('button', { name: 'Sign in', exact: true })).toHaveCount(0);
   });
 
   test('renders simulation controls', async ({ page }) => {
