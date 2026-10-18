@@ -15,8 +15,8 @@ test.describe('Mobile layout', () => {
     await page.goto('/');
 
     // Machine visualization should be visible
-    await expect(page.getByTestId('machine-name')).toHaveText('trafficLight');
-    await expect(page.locator('[data-state-id="trafficLight.green"]')).toBeVisible();
+    await expect(page.getByTestId('machine-name')).toHaveText('rental');
+    await expect(page.locator('[data-state-id="rental.Browsing"]')).toBeVisible();
   });
 
   test('switches to Code tab', async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe('Mobile layout', () => {
 
     await expect(page.getByLabel('Stop simulation')).toBeVisible();
     await expect(
-      page.locator('[data-state-id="trafficLight.green"] [data-sim-active]'),
+      page.locator('[data-state-id="rental.Browsing"] [data-sim-active]'),
     ).toBeVisible();
   });
 });

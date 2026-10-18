@@ -42,8 +42,6 @@ import {
   Sun,
   X,
   Check,
-  HelpCircle,
-  ExternalLink,
   Sparkles,
   LogOut,
   User,
@@ -52,12 +50,9 @@ import {
   createSourceFile,
   getUser,
   logout,
-  backupCodeBeforeLogin,
   restoreCodeAfterLogin,
-  loginRedirect,
   ApiError,
 } from '@/lib/api';
-import { examples } from '@/lib/examples';
 
 
 const BAR_CLASSES = 'flex shrink-0 items-center h-11 px-4';
@@ -95,7 +90,6 @@ export function AppLayout() {
   const user = useSelector(appStore, (s) => s.context.user);
   const nameModalOpen = useSelector(appStore, (s) => s.context.nameModalOpen);
   const nameInput = useSelector(appStore, (s) => s.context.nameInput);
-  const examplesOpen = useSelector(appStore, (s) => s.context.examplesOpen);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
@@ -227,7 +221,7 @@ export function AppLayout() {
           Welcome to Sketch
         </h2>
         <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
-          A responsive visualizer and simulator for XState v5 state machines. Open the editor to write code, or try an example to get started.
+          A responsive visualizer and simulator for XState v5 state machines. Open the editor to write or paste your state machine.
         </p>
         <div className="flex flex-col items-center gap-3">
           {!isMobile && (
@@ -239,22 +233,6 @@ export function AppLayout() {
               Open Editor
             </button>
           )}
-          <div className="flex flex-wrap justify-center gap-2">
-            {examples.slice(0, 3).map((example) => (
-              <button
-                key={example.title}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
-                onClick={() => {
-                  appStore.trigger.updateFromCode({ code: example.code });
-                  if (!panelOpen && !isMobile) {
-                    appStore.trigger.setDrawerOpen({ open: true });
-                  }
-                }}
-              >
-                {example.title}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -368,13 +346,6 @@ export function AppLayout() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            className="inline-flex cursor-pointer items-center gap-1.5 px-0 py-1.5 text-xs font-medium text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
-            onClick={() => appStore.trigger.setExamplesOpen({ open: true })}
-            aria-label="Examples"
-          >
-            Examples
-          </button>
           {!isEmpty && (
             <button
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-50"
@@ -400,40 +371,8 @@ export function AppLayout() {
             </button>
           )}
 
-          {/* Help menu */}
-          <DropdownMenu>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <DropdownMenuTrigger
-                    className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-foreground transition-opacity hover:opacity-85"
-                    aria-label="Help"
-                  />
-                }
-              >
-                <HelpCircle size={14} />
-              </TooltipTrigger>
-              <TooltipContent>Help</TooltipContent>
-            </Tooltip>
-            <DropdownMenuContent align="end" side="bottom" sideOffset={4}>
-              <DropdownMenuItem render={<a href="https://github.com/statelyai/sketch/issues/new" target="_blank" rel="noopener noreferrer" />}>
-                <ExternalLink size={14} />
-                Report an issue
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<a href="https://stately.ai/privacy" target="_blank" rel="noopener noreferrer" />}>
-                <ExternalLink size={14} />
-                Privacy Policy
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem render={<a href="https://stately.ai/docs/xstate" target="_blank" rel="noopener noreferrer" />}>
-                <ExternalLink size={14} />
-                XState Docs
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* User menu */}
-          {user ? (
+          {user && (
             <DropdownMenu>
               <Tooltip>
                 <TooltipTrigger
@@ -468,21 +407,6 @@ export function AppLayout() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <Tooltip>
-              <TooltipTrigger
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
-                onClick={() => {
-                  backupCodeBeforeLogin(appStore.getSnapshot().context.code);
-                  loginRedirect();
-                }}
-                aria-label="Sign in"
-              >
-                <User size={14} />
-                Sign in
-              </TooltipTrigger>
-              <TooltipContent>Sign in with Stately</TooltipContent>
-            </Tooltip>
           )}
         </div>
       </div>
@@ -524,71 +448,6 @@ export function AppLayout() {
               >
                 Share
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {examplesOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/10 backdrop-blur-xs"
-            onClick={() => appStore.trigger.setExamplesOpen({ open: false })}
-          />
-          <div
-            role="dialog"
-            aria-label="Examples"
-            className="relative z-10 flex max-h-[min(42rem,80vh)] w-full max-w-2xl flex-col border border-border bg-background shadow-md"
-          >
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <div>
-                <h3 className="text-sm font-medium text-foreground">Examples</h3>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  Load a realistic machine or a format demo into the editor.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => appStore.trigger.setExamplesOpen({ open: false })}
-                className="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent"
-              >
-                Close
-              </button>
-            </div>
-            <div data-testid="example-list" className="grid gap-1 overflow-auto p-2">
-              {examples.map((example) => (
-                <button
-                  key={example.title}
-                  type="button"
-                  data-testid={`example-${example.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  onClick={() => {
-                    appStore.trigger.updateFromCode({ code: example.code });
-                    appStore.trigger.setExamplesOpen({ open: false });
-                    if (!isMobile) {
-                      appStore.trigger.setEditorTab({ tab: 'code' });
-                    }
-                  }}
-                  className="group flex cursor-pointer flex-col items-start gap-0.5 rounded-md border border-transparent px-3 py-2 text-left transition-colors hover:border-border hover:bg-accent"
-                >
-                  <div className="flex w-full items-center gap-2">
-                    <span className="text-xs font-medium text-foreground">
-                      {example.title}
-                    </span>
-                    <span className="rounded bg-muted px-1.5 py-0.5 text-[0.5625rem] font-medium text-muted-foreground">
-                      {example.format === 'xstate'
-                        ? 'XState'
-                        : example.format === 'json'
-                          ? 'JSON'
-                          : example.format === 'yaml'
-                            ? 'YAML'
-                            : 'Mermaid'}
-                    </span>
-                  </div>
-                  <span className="text-[0.6875rem] text-muted-foreground">
-                    {example.description}
-                  </span>
-                </button>
-              ))}
             </div>
           </div>
         </div>

@@ -11,6 +11,34 @@ Stately Sketch is a simple, responsive state machine visualizer and simulator fo
 - Lets you edit machine code and see updates immediately
 - Supports XState code, Sketch DSL, JSON, YAML, and Mermaid input
 
+## Locker deployment on Cloudflare
+
+Live page: **[locker-stately.derektchang.workers.dev](https://locker-stately.derektchang.workers.dev/)**.
+This fork loads the Locker rental design prototype from
+[`src/lib/locker-rental.machine.mjs`](src/lib/locker-rental.machine.mjs) by default.
+The header omits the Examples launcher, Help menu and signed-out Sign in button.
+
+- Cloudflare Worker: `locker-stately`.
+- Cloudflare account ID: `12daf71d9ae53e287fa320d1964f4b8d`.
+- First deployed: October 18, 2026.
+- Initial deployment version: `35cc7d2d-7bb5-47d6-aa71-927cc9b59351`.
+
+Build and deploy from the repository root using Wrangler:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm build
+pnpm exec wrangler deploy
+```
+
+`wrangler.jsonc` identifies the Worker and account. Reuse the existing authorized
+Wrangler credentials; `wrangler whoami` checks access. The saved OAuth login can
+refresh automatically. If permissions are missing, resolve the required CLI
+access explicitly. Keep tokens out of source control. Publishing a new build
+updates the hosted page; browser editor changes do not update the saved model or
+deployment. The rental model is a design simulation and performs no real payments
+or locker operations.
+
 ## Run It Locally
 
 ```bash

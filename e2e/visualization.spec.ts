@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { loadExample } from './helpers/load-example';
 
 test.describe('Machine visualization', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await loadExample(page, 'Traffic Light');
   });
 
   test('shows transitions with event names', async ({ page }) => {

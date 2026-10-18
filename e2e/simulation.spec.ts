@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { loadExample } from './helpers/load-example';
 
 test.describe('Simulation mode', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await loadExample(page, 'Traffic Light');
     // Wait for machine to render
     await expect(page.locator('[data-state-id="trafficLight.green"]')).toBeVisible();
   });

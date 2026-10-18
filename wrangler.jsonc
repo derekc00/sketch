@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "stately-sketch",
+  "name": "locker-stately",
+  "account_id": "12daf71d9ae53e287fa320d1964f4b8d",
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry"
